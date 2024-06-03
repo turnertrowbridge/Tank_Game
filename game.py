@@ -1,6 +1,7 @@
 import pygame
 import math
 from projectile import Projectile
+from enemy import Enemy
 
 
 class Game:
@@ -12,6 +13,7 @@ class Game:
         self.projectiles = []
         self.max_projectiles = 5
         self.font = pygame.font.Font(None, 36)
+        self.enemies = [Enemy(300, 300), Enemy(500, 500)]
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -77,6 +79,18 @@ class Game:
             else:
                 # Draw the projectile
                 projectile.draw(self.screen)
+
+        # Update and draw enemies
+        for enemy in self.enemies[:]:
+            enemy.update(self.player)
+            enemy.draw(self.screen, self.player)
+            for projectile in enemy.projectiles[:]:
+                if self.player.colliderect(projectile.rect):
+                    self.__init__(self.screen)
+            for player_projectile in self.projectiles[:]:
+                if player_projectile.rect.colliderect(enemy.rect):
+                    self.enemies.remove(enemy)
+                    self.projectiles.remove(player_projectile)
 
         # Draw projectile counter
         counter_surf = self.font.render(
