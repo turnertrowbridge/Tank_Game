@@ -1,5 +1,6 @@
 import pygame
 import math
+from projectile import Projectile
 
 
 class Game:
@@ -8,11 +9,20 @@ class Game:
         self.SPEED = 3
         self.player = pygame.Rect(100, 100, 50, 50)
         self.player_aim = pygame.Rect(0, 0, 50, 10)
+        self.projectiles = []
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                dx = mouse_x - self.player.centerx
+                dy = mouse_y - self.player.centery
+                angle = math.degrees(math.atan2(-dy, dx))
+                projectile = Projectile(self.player.centerx + math.cos(math.radians(angle)) * (self.player_aim.width // 2),
+                                        self.player.centery - math.sin(math.radians(angle)) * (self.player_aim.width // 2), angle)
+                self.projectiles.append(projectile)
 
         return True
 
@@ -55,6 +65,10 @@ class Game:
         aim_rect = surf.get_rect(
             center=(self.player.centerx + offset_x, self.player.centery + offset_y))
         self.screen.blit(surf, aim_rect)
+
+        for projectile in self.projectiles:
+            projectile.update()
+            projectile.draw(self.screen)
 
         pygame.display.flip()
 
