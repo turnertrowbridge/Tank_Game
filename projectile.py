@@ -7,7 +7,7 @@ class Projectile:
         self.x = x
         self.y = y
         self.angle = angle
-        self.speed = 5
+        self.speed = 9
         self.rect = pygame.Rect(x, y, 10, 7)
         self.surf = pygame.Surface((10, 7), pygame.SRCALPHA)
         pygame.draw.rect(self.surf, (0, 0, 255), (0, 0, 10, 7))

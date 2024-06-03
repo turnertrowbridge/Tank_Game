@@ -10,12 +10,14 @@ class Game:
         self.player = pygame.Rect(100, 100, 50, 50)
         self.player_aim = pygame.Rect(0, 0, 50, 10)
         self.projectiles = []
+        self.max_projectiles = 5
+        self.font = pygame.font.Font(None, 36)
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and len(self.projectiles) < self.max_projectiles:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 dx = mouse_x - self.player.centerx
                 dy = mouse_y - self.player.centery
@@ -66,9 +68,20 @@ class Game:
             center=(self.player.centerx + offset_x, self.player.centery + offset_y))
         self.screen.blit(surf, aim_rect)
 
-        for projectile in self.projectiles:
+        # Update and draw projectiles
+        for projectile in self.projectiles[:]:
             projectile.update()
-            projectile.draw(self.screen)
+            # Remove projectile if it goes off screen
+            if not self.screen.get_rect().colliderect(projectile.rect):
+                self.projectiles.remove(projectile)
+            else:
+                # Draw the projectile
+                projectile.draw(self.screen)
+
+        # Draw projectile counter
+        counter_surf = self.font.render(
+            str(self.max_projectiles - len(self.projectiles)), True, (0, 0, 0))
+        self.screen.blit(counter_surf, (self.screen.get_width() - 30, 10))
 
         pygame.display.flip()
 
