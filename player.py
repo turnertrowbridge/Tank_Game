@@ -14,7 +14,7 @@ class Player:
         self.MAX_PROJECTILES = 5
         self.MAX_MINES = 3
         self.score = 0
-        self.lives = 1
+        self.lives = 5
         self.destroys_with_projectiles = 0
         self.destroys_with_mines = 0
 
