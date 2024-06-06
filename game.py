@@ -9,7 +9,7 @@ class Game:
         self.screen = screen
         self.font = pygame.font.Font(None, 36)
         self.player = Player(100, 100)
-        self.enemies = [Enemy(300, 300), Enemy(500, 500)]
+        self.enemies = []
         self.start_time = pygame.time.get_ticks()
         self.game_state = "playing"
         self.game_over_time = 0
@@ -55,8 +55,8 @@ class Game:
         # Display lives and game over if player has no lives
         self.update_lives()
 
-        # Randomly spawn enemies at a 10% chance each frame
-        if random.randint(0, 100) < 10:
+        # Randomly spawn enemies at a 3% chance each frame
+        if random.randint(0, 100) < 3:
             self.spawn_enemy()
 
         # Update the display
@@ -97,7 +97,7 @@ class Game:
     def spawn_enemy(self):
         # Randomly choose a side of the screen to spawn the enemy from
         side = random.choice(['top', 'bottom', 'left', 'right'])
-        offscreen_offset = 200
+        offscreen_offset = 80
 
         # Generate a random position and velocity for the enemy
         if side == 'top':
