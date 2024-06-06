@@ -78,9 +78,9 @@ class Game:
 
     def draw_timer(self):
         # Draw timer
-        timer = pygame.time.get_ticks() - self.start_time
+        timer = (pygame.time.get_ticks() - self.start_time) / 1000
         timer_surf = self.font.render(
-            str(timer // 1000) + " seconds", True, (0, 0, 0))
+            '{:.2f} seconds'.format(timer), True, (0, 0, 0))
         self.screen.blit(timer_surf, (self.screen.get_width() // 2, 10))
 
     def update_lives(self):
@@ -91,7 +91,7 @@ class Game:
         if self.player.lives <= 0:
             if self.game_state == "playing":
                 self.game_over_time = (
-                    pygame.time.get_ticks() - self.start_time) // 1000
+                    pygame.time.get_ticks() - self.start_time) / 1000
                 self.game_state = "game_over"
 
     def spawn_enemy(self):
@@ -135,7 +135,7 @@ class Game:
         game_over_surf.blit(stats_surf, (100, 80))
 
         time_surf = stats_font.render(
-            'Time Survived: ' + str(self.game_over_time), True, (0, 0, 0))
+            'Time Survived: ' + '{:.2f} seconds'.format(self.game_over_time), True, (0, 0, 0))
         game_over_surf.blit(time_surf, (100, 120))
 
         enemies_destroyed_surf = stats_font.render(
