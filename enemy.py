@@ -10,6 +10,7 @@ class Enemy:
         self.aim = pygame.Rect(0, 0, 50, 10)
         self.projectiles = []
         self.shoot_timer = random.randint(20, 50)
+        self.SPEED = 1
 
     def update(self, player):
         dx = player.centerx - self.rect.centerx
@@ -27,6 +28,14 @@ class Enemy:
             projectile.update()
             if not pygame.display.get_surface().get_rect().colliderect(projectile.rect):
                 self.projectiles.remove(projectile)
+
+        # Move towards the player
+        angle = math.degrees(math.atan2(dy, dx))
+        if dx != 0:
+            self.rect.x += dx / abs(dx) * self.SPEED
+        if dy != 0:
+            self.rect.y += dy / abs(dy) * self.SPEED
+        
 
     def draw(self, screen, player):
         dx = player.centerx - self.rect.centerx
