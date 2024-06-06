@@ -8,7 +8,7 @@ class Player:
     def __init__(self, x, y):
         self.model = pygame.Rect(x, y, 50, 50)
         self.model_aim = pygame.Rect(0, 0, 50, 10)
-        self.SPEED = 3
+        self.SPEED = 5
         self.mines = []
         self.projectiles = []
         self.MAX_PROJECTILES = 5
