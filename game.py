@@ -90,13 +90,16 @@ class Game:
                 self.game_state = "game_over"
 
     def show_game_over_screen(self):
-        game_over_surf = pygame.Surface((400, 300))
+        game_over_surf = pygame.Surface((580, 480))
         game_over_surf.fill((255, 255, 255))
         game_over_surf.set_alpha(200)
 
+        background_surf = pygame.Surface((game_over_surf.get_width() + 20, game_over_surf.get_height() + 20))
+        background_surf.fill((0, 0, 0))
+
         title_font = pygame.font.Font(None, 64)
         title_surf = title_font.render('Game Over', True, (0, 0, 0))
-        game_over_surf.blit(title_surf, (100, 20))
+        game_over_surf.blit(title_surf, (150, 20))
 
         stats_font = pygame.font.Font(None, 32)
         stats_surf = stats_font.render('Match Stats', True, (0, 0, 0))
@@ -118,6 +121,28 @@ class Game:
             'Enemies Destroyed by Mines: ' + str(self.player.destroys_with_projectiles), True, (0, 0, 0))
         game_over_surf.blit(mines_surf, (100, 240))
 
-        self.screen.blit(game_over_surf, (100, 100))
+        # Calculate the center of the screen
+        center_x = self.screen.get_width() // 2
+        center_y = self.screen.get_height() // 2
+
+        # Calculate the top-left position of the game over surface
+        game_over_x = 10
+        game_over_y = 10
+
+        background_surf.blit(game_over_surf, (game_over_x, game_over_y))
+
+        # Create a play again button
+        play_again_font = pygame.font.Font(None, 48)
+        play_again_surf = play_again_font.render(
+            'Play Again', True, (255, 255, 255))
+        play_again_x = center_x - play_again_surf.get_width() // 2
+        play_again_y = game_over_y + game_over_surf.get_height() + 20
+        background_surf.blit(play_again_surf, (play_again_x, play_again_y))
+
+        # Calculate the top-left position of the background surface
+        background_x = center_x - background_surf.get_width() // 2
+        background_y = center_y - background_surf.get_height() // 2
+
+        self.screen.blit(background_surf, (background_x, background_y))
 
         pygame.display.flip()
