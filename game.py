@@ -9,7 +9,9 @@ class Game:
         self.font = pygame.font.Font(None, 36)
         self.player = Player(100, 100)
         self.enemies = [Enemy(300, 300), Enemy(500, 500)]
-        self.score = 0
+        self.start_time = pygame.time.get_ticks()
+        self.game_over = False
+        self.game_over_time = 0
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -40,6 +42,12 @@ class Game:
         # Draw score
         self.draw_score()
 
+        # Draw timer
+        self.draw_timer()
+
+        # Display lives and game over if player has no lives
+        self.update_lives()
+
         # Update the display
         pygame.display.flip()
 
@@ -57,5 +65,52 @@ class Game:
             str(self.player.MAX_PROJECTILES - len(self.player.projectiles)), True, (0, 0, 0))
         self.screen.blit(counter_surf, (self.screen.get_width() - 30, 10))
 
-    def update(self):
-        self.update_enemies()
+    def draw_timer(self):
+        # Draw timer
+        timer = pygame.time.get_ticks() - self.start_time
+        timer_surf = self.font.render(
+            str(timer // 1000) + " seconds", True, (0, 0, 0))
+        self.screen.blit(timer_surf, (self.screen.get_width() // 2, 10))
+
+    def update_lives(self):
+        lives_surf = self.font.render(
+            "Lives: " + str(self.player.lives), True, (0, 0, 0))
+        self.screen.blit(lives_surf, (10, 40))
+
+        if self.player.lives <= 0:
+            if not self.game_over:
+                self.game_over_time = (
+                    pygame.time.get_ticks() - self.start_time) // 1000
+                self.game_over = True
+            self.show_game_over_screen(self.game_over_time)
+
+    def show_game_over_screen(self, timer):
+        game_over_surf = pygame.Surface((400, 300))
+        game_over_surf.fill((255, 255, 255))
+        game_over_surf.set_alpha(200)
+
+        title_font = pygame.font.Font(None, 64)
+        title_surf = title_font.render('Game Over', True, (0, 0, 0))
+        game_over_surf.blit(title_surf, (100, 20))
+
+        stats_font = pygame.font.Font(None, 32)
+        stats_surf = stats_font.render('Match Stats', True, (0, 0, 0))
+        game_over_surf.blit(stats_surf, (100, 80))
+
+        time_surf = stats_font.render(
+            'Time Survived: ' + str(self.game_over_time), True, (0, 0, 0))
+        game_over_surf.blit(time_surf, (100, 120))
+
+        enemies_destroyed_surf = stats_font.render(
+            'Enemies Destroyed: ' + str(self.player.score), True, (0, 0, 0))
+        game_over_surf.blit(enemies_destroyed_surf, (100, 160))
+
+        projectiles_surf = stats_font.render('Enemies Destroyed by Projectiles: ' + str(
+            self.player.destroys_with_projectiles), True, (0, 0, 0))
+        game_over_surf.blit(projectiles_surf, (100, 200))
+
+        mines_surf = stats_font.render(
+            'Enemies Destroyed by Mines: ' + str(self.player.destroys_with_projectiles), True, (0, 0, 0))
+        game_over_surf.blit(mines_surf, (100, 240))
+
+        self.screen.blit(game_over_surf, (100, 100))

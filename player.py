@@ -14,6 +14,9 @@ class Player:
         self.MAX_PROJECTILES = 5
         self.MAX_MINES = 3
         self.score = 0
+        self.lives = 1
+        self.destroys_with_projectiles = 0
+        self.destroys_with_mines = 0
 
     def handle_movements(self):
         # Move model with WASD keys
@@ -95,8 +98,9 @@ class Player:
                         except ValueError:  # If enemy is already removed, ignore
                             pass
                         self.score += 1
+                        self.destroys_with_mines += 1
                 if math.hypot(self.model.centerx - mine.rect.centerx, self.model.centery - mine.rect.centery) < 50:
-                    pass
+                    self.lives -= 1
                 try:
                     self.mines.remove(mine)
                 except ValueError:
@@ -109,7 +113,8 @@ class Player:
             enemy.draw(screen, self.model)
             for projectile in enemy.projectiles[:]:
                 if self.model.colliderect(projectile.rect):
-                    pass
+                    self.lives -= 1
+                    enemy.projectiles.remove(projectile)
             for player_projectile in self.projectiles[:]:
                 if player_projectile.rect.colliderect(enemy.rect):
                     try:
@@ -123,3 +128,4 @@ class Player:
                     except ValueError:
                         pass
                     self.score += 1
+                    self.destroys_with_projectiles += 1
