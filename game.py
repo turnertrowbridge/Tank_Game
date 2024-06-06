@@ -10,7 +10,7 @@ class Game:
         self.player = Player(100, 100)
         self.enemies = [Enemy(300, 300), Enemy(500, 500)]
         self.start_time = pygame.time.get_ticks()
-        self.game_over = False
+        self.game_state = "playing"
         self.game_over_time = 0
 
     def handle_events(self):
@@ -21,9 +21,9 @@ class Game:
         return True
 
     def draw(self):
-        if not self.game_over:
+        if self.game_state == "playing":
             self.draw_game()
-        else:
+        elif self.game_state == "game_over":
             self.show_game_over_screen()
 
     def draw_game(self):
@@ -84,10 +84,10 @@ class Game:
         self.screen.blit(lives_surf, (10, 40))
 
         if self.player.lives <= 0:
-            if not self.game_over:
+            if self.game_state == "playing":
                 self.game_over_time = (
                     pygame.time.get_ticks() - self.start_time) // 1000
-                self.game_over = True
+                self.game_state = "game_over"
 
     def show_game_over_screen(self):
         game_over_surf = pygame.Surface((400, 300))
