@@ -9,7 +9,7 @@ class Enemy:
         self.rect = pygame.Rect(x, y, 50, 50)
         self.aim = pygame.Rect(0, 0, 50, 10)
         self.projectiles = []
-        self.shoot_timer = random.randint(120, 300)
+        self.shoot_timer = random.randint(20, 50)
 
     def update(self, player):
         dx = player.centerx - self.rect.centerx
@@ -21,7 +21,7 @@ class Enemy:
             projectile = Projectile(self.rect.centerx + math.cos(math.radians(angle)) * (
                 self.aim.width // 2), self.rect.centery - math.sin(math.radians(angle)) * (self.aim.width // 2), angle)
             self.projectiles.append(projectile)
-            self.shoot_timer = random.randint(120, 300)
+            self.shoot_timer = random.randint(20, 50)
 
         for projectile in self.projectiles[:]:
             projectile.update()

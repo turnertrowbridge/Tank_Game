@@ -14,6 +14,7 @@ class Game:
         self.max_projectiles = 5
         self.font = pygame.font.Font(None, 36)
         self.enemies = [Enemy(300, 300), Enemy(500, 500)]
+        self.score = 0
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -34,6 +35,39 @@ class Game:
         # Make screen white
         self.screen.fill((255, 255, 255))
 
+        # Handle player movement
+        self.handle_movements()
+
+        # Update game state
+        self.update()
+
+        # Draw player
+        self.draw_player()
+
+        # Draw enemies
+        self.draw_projectile_counter()
+
+        # Draw core
+        self.draw_score()
+
+        # Update the display
+        pygame.display.flip()
+
+        # Cap the frame rate
+        pygame.time.delay(1000 // 60)
+
+    def draw_score(self):
+        score_surf = self.font.render(
+            str(self.score) + " enemies destroyed", True, (0, 0, 0))
+        self.screen.blit(score_surf, (10, 10))
+
+    def draw_projectile_counter(self):
+        # Draw projectile counter
+        counter_surf = self.font.render(
+            str(self.max_projectiles - len(self.projectiles)), True, (0, 0, 0))
+        self.screen.blit(counter_surf, (self.screen.get_width() - 30, 10))
+
+    def handle_movements(self):
         # Move player with WASD keys
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
@@ -45,6 +79,36 @@ class Game:
         if keys[pygame.K_d]:
             self.player.x += self.SPEED
 
+    def update(self):
+        self.update_enemies()
+        self.update_projectiles()
+
+    def update_enemies(self):
+        # Update and draw/destroy enemies
+        for enemy in self.enemies[:]:
+            enemy.update(self.player)
+            enemy.draw(self.screen, self.player)
+            for projectile in enemy.projectiles[:]:
+                if self.player.colliderect(projectile.rect):
+                    self.__init__(self.screen)
+            for player_projectile in self.projectiles[:]:
+                if player_projectile.rect.colliderect(enemy.rect):
+                    self.enemies.remove(enemy)
+                    self.projectiles.remove(player_projectile)
+                    self.score += 1  # Update score when enemy is destroyed
+
+    def update_projectiles(self):
+        # Update and draw projectiles
+        for projectile in self.projectiles[:]:
+            projectile.update()
+            # Remove projectile if it goes off screen
+            if not self.screen.get_rect().colliderect(projectile.rect):
+                self.projectiles.remove(projectile)
+            else:
+                # Draw the projectile
+                projectile.draw(self.screen)
+
+    def draw_player(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
         # Calculate angle between player and mouse
@@ -69,35 +133,3 @@ class Game:
         aim_rect = surf.get_rect(
             center=(self.player.centerx + offset_x, self.player.centery + offset_y))
         self.screen.blit(surf, aim_rect)
-
-        # Update and draw projectiles
-        for projectile in self.projectiles[:]:
-            projectile.update()
-            # Remove projectile if it goes off screen
-            if not self.screen.get_rect().colliderect(projectile.rect):
-                self.projectiles.remove(projectile)
-            else:
-                # Draw the projectile
-                projectile.draw(self.screen)
-
-        # Update and draw enemies
-        for enemy in self.enemies[:]:
-            enemy.update(self.player)
-            enemy.draw(self.screen, self.player)
-            for projectile in enemy.projectiles[:]:
-                if self.player.colliderect(projectile.rect):
-                    self.__init__(self.screen)
-            for player_projectile in self.projectiles[:]:
-                if player_projectile.rect.colliderect(enemy.rect):
-                    self.enemies.remove(enemy)
-                    self.projectiles.remove(player_projectile)
-
-        # Draw projectile counter
-        counter_surf = self.font.render(
-            str(self.max_projectiles - len(self.projectiles)), True, (0, 0, 0))
-        self.screen.blit(counter_surf, (self.screen.get_width() - 30, 10))
-
-        pygame.display.flip()
-
-        # Cap the frame rate
-        pygame.time.delay(1000 // 60)
