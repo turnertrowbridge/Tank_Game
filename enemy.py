@@ -18,7 +18,7 @@ class Enemy:
         angle = math.degrees(math.atan2(-dy, dx))
 
         self.shoot_timer -= 1
-        if self.shoot_timer <= 0:
+        if self.shoot_timer <= 0 and len(self.projectiles) < 3:
             projectile = Projectile(self.rect.centerx + math.cos(math.radians(angle)) * (
                 self.aim.width // 2), self.rect.centery - math.sin(math.radians(angle)) * (self.aim.width // 2), angle)
             self.projectiles.append(projectile)
@@ -35,7 +35,6 @@ class Enemy:
             self.rect.x += dx / abs(dx) * self.SPEED
         if dy != 0:
             self.rect.y += dy / abs(dy) * self.SPEED
-        
 
     def draw(self, screen, player):
         dx = player.centerx - self.rect.centerx
