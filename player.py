@@ -17,6 +17,8 @@ class Player:
         self.lives = 5
         self.destroys_with_projectiles = 0
         self.destroys_with_mines = 0
+        self.player_color = (0, 0, 255)
+        self.projectile_speed = 7
 
     def handle_movements(self):
         # Move model with WASD keys
@@ -37,7 +39,7 @@ class Player:
             dy = mouse_y - self.model.centery
             angle = math.degrees(math.atan2(-dy, dx))
             projectile = Projectile(self.model.centerx + math.cos(math.radians(angle)) * (self.model_aim.width // 2),
-                                    self.model.centery - math.sin(math.radians(angle)) * (self.model_aim.width // 2), angle)
+                                    self.model.centery - math.sin(math.radians(angle)) * (self.model_aim.width // 2), angle, (0, 0, 255), self.projectile_speed)
             self.projectiles.append(projectile)
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and len(self.mines) < 3:
@@ -45,7 +47,7 @@ class Player:
                 Mine(self.model.centerx, self.model.centery))
 
     def draw(self, screen):
-        pygame.draw.rect(screen, (255, 0, 0), self.model)
+        pygame.draw.rect(screen, self.player_color, self.model)
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
 

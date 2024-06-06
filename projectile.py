@@ -3,14 +3,14 @@ import math
 
 
 class Projectile:
-    def __init__(self, x, y, angle):
+    def __init__(self, x, y, angle, color, speed=5):
         self.x = x
         self.y = y
         self.angle = angle
-        self.speed = 5
+        self.speed = speed
         self.rect = pygame.Rect(x, y, 10, 7)
         self.surf = pygame.Surface((10, 7), pygame.SRCALPHA)
-        pygame.draw.rect(self.surf, (0, 0, 255), (0, 0, 10, 7))
+        pygame.draw.rect(self.surf, color, (0, 0, 10, 7))
         self.surf = pygame.transform.rotate(self.surf, angle)
 
     def update(self):

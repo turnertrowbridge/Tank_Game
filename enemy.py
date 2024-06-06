@@ -20,7 +20,7 @@ class Enemy:
         self.shoot_timer -= 1
         if self.shoot_timer <= 0 and len(self.projectiles) < 3:
             projectile = Projectile(self.rect.centerx + math.cos(math.radians(angle)) * (
-                self.aim.width // 2), self.rect.centery - math.sin(math.radians(angle)) * (self.aim.width // 2), angle)
+                self.aim.width // 2), self.rect.centery - math.sin(math.radians(angle)) * (self.aim.width // 2), angle, (255, 0, 0))
             self.projectiles.append(projectile)
             self.shoot_timer = random.randint(20, 50)
 
