@@ -82,7 +82,7 @@ class Player:
                 # Draw the projectile
                 projectile.draw(screen)
 
-    def update_mines(self, screen, enemies, game):
+    def update_mines(self, screen, enemies):
         for mine in self.mines[:]:
             mine.update()
             mine.draw(screen)
@@ -102,14 +102,14 @@ class Player:
                 except ValueError:
                     pass
 
-    def update_enemies(self, screen, enemies, game):
+    def update_enemies(self, screen, enemies):
         # Update and draw/destroy enemies
         for enemy in enemies[:]:
             enemy.update(self.model)
             enemy.draw(screen, self.model)
             for projectile in enemy.projectiles[:]:
                 if self.model.colliderect(projectile.rect):
-                    game.game_over = True
+                    pass
             for player_projectile in self.projectiles[:]:
                 if player_projectile.rect.colliderect(enemy.rect):
                     try:
