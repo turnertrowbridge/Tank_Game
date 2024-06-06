@@ -21,6 +21,12 @@ class Game:
         return True
 
     def draw(self):
+        if not self.game_over:
+            self.draw_game()
+        else:
+            self.show_game_over_screen()
+
+    def draw_game(self):
         # Make screen white
         self.screen.fill((255, 255, 255))
 
@@ -82,9 +88,8 @@ class Game:
                 self.game_over_time = (
                     pygame.time.get_ticks() - self.start_time) // 1000
                 self.game_over = True
-            self.show_game_over_screen(self.game_over_time)
 
-    def show_game_over_screen(self, timer):
+    def show_game_over_screen(self):
         game_over_surf = pygame.Surface((400, 300))
         game_over_surf.fill((255, 255, 255))
         game_over_surf.set_alpha(200)
@@ -114,3 +119,5 @@ class Game:
         game_over_surf.blit(mines_surf, (100, 240))
 
         self.screen.blit(game_over_surf, (100, 100))
+
+        pygame.display.flip()
