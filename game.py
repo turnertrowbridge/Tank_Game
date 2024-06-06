@@ -94,7 +94,8 @@ class Game:
         game_over_surf.fill((255, 255, 255))
         game_over_surf.set_alpha(200)
 
-        background_surf = pygame.Surface((game_over_surf.get_width() + 20, game_over_surf.get_height() + 20))
+        background_surf = pygame.Surface(
+            (game_over_surf.get_width() + 20, game_over_surf.get_height() + 20))
         background_surf.fill((0, 0, 0))
 
         title_font = pygame.font.Font(None, 64)
@@ -118,7 +119,7 @@ class Game:
         game_over_surf.blit(projectiles_surf, (100, 200))
 
         mines_surf = stats_font.render(
-            'Enemies Destroyed by Mines: ' + str(self.player.destroys_with_projectiles), True, (0, 0, 0))
+            'Enemies Destroyed by Mines: ' + str(self.player.destroys_with_mines), True, (0, 0, 0))
         game_over_surf.blit(mines_surf, (100, 240))
 
         # Calculate the center of the screen
@@ -134,15 +135,28 @@ class Game:
         # Create a play again button
         play_again_font = pygame.font.Font(None, 48)
         play_again_surf = play_again_font.render(
-            'Play Again', True, (255, 255, 255))
-        play_again_x = center_x - play_again_surf.get_width() // 2
-        play_again_y = game_over_y + game_over_surf.get_height() + 20
+            'Play Again', True, (255, 255, 0))
+        play_again_x = background_surf.get_width() // 2 - play_again_surf.get_width() // 2
+        play_again_y = background_surf.get_height() - play_again_surf.get_height() - 20
         background_surf.blit(play_again_surf, (play_again_x, play_again_y))
 
         # Calculate the top-left position of the background surface
         background_x = center_x - background_surf.get_width() // 2
         background_y = center_y - background_surf.get_height() // 2
-
         self.screen.blit(background_surf, (background_x, background_y))
 
+        play_again_button = pygame.Rect(background_x + play_again_x, background_y + play_again_y, play_again_surf.get_width(), play_again_surf.get_height())
+
         pygame.display.flip()
+
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    waiting = False
+                    self.running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if play_again_button.collidepoint(mouse_pos):
+                        waiting = False
+                        self.__init__(self.screen)  # Temporarily reset the game solution
