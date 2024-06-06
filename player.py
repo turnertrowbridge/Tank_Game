@@ -21,13 +21,13 @@ class Player:
     def handle_movements(self):
         # Move model with WASD keys
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
+        if keys[pygame.K_w] and self.model.y > 0:
             self.model.y -= self.SPEED
-        if keys[pygame.K_a]:
+        if keys[pygame.K_a] and self.model.x > 0:
             self.model.x -= self.SPEED
-        if keys[pygame.K_s]:
+        if keys[pygame.K_s] and self.model.y < 1200 - self.model.height:
             self.model.y += self.SPEED
-        if keys[pygame.K_d]:
+        if keys[pygame.K_d] and self.model.x < 1600 - self.model.width:
             self.model.x += self.SPEED
 
     def handle_events(self, event):
@@ -91,7 +91,7 @@ class Player:
             mine.draw(screen)
             if mine.exploded:
                 for enemy in enemies[:]:
-                    if math.hypot(enemy.rect.centerx - mine.rect.centerx, enemy.rect.centery - mine.rect.centery) < 50:
+                    if math.hypot(enemy.rect.centerx - mine.rect.centerx, enemy.rect.centery - mine.rect.centery) < 200:
                         try:
                             # Remove enemy if it is within the blast radius
                             enemies.remove(enemy)
