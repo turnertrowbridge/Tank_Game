@@ -2,6 +2,7 @@ import pygame
 import math
 from projectile import Projectile
 from enemy import Enemy
+from mine import Mine
 
 
 class Game:
@@ -11,16 +12,17 @@ class Game:
         self.player = pygame.Rect(100, 100, 50, 50)
         self.player_aim = pygame.Rect(0, 0, 50, 10)
         self.projectiles = []
-        self.max_projectiles = 5
+        self.MAX_PROJECTILES = 5
         self.font = pygame.font.Font(None, 36)
         self.enemies = [Enemy(300, 300), Enemy(500, 500)]
         self.score = 0
+        self.mines = []
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            if event.type == pygame.MOUSEBUTTONDOWN and len(self.projectiles) < self.max_projectiles:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and len(self.projectiles) < self.MAX_PROJECTILES:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 dx = mouse_x - self.player.centerx
                 dy = mouse_y - self.player.centery
@@ -28,6 +30,9 @@ class Game:
                 projectile = Projectile(self.player.centerx + math.cos(math.radians(angle)) * (self.player_aim.width // 2),
                                         self.player.centery - math.sin(math.radians(angle)) * (self.player_aim.width // 2), angle)
                 self.projectiles.append(projectile)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and len(self.mines) < 3:
+                self.mines.append(Mine(self.player.centerx, self.player.centery))
 
         return True
 
@@ -64,7 +69,7 @@ class Game:
     def draw_projectile_counter(self):
         # Draw projectile counter
         counter_surf = self.font.render(
-            str(self.max_projectiles - len(self.projectiles)), True, (0, 0, 0))
+            str(self.MAX_PROJECTILES - len(self.projectiles)), True, (0, 0, 0))
         self.screen.blit(counter_surf, (self.screen.get_width() - 30, 10))
 
     def handle_movements(self):
@@ -82,6 +87,7 @@ class Game:
     def update(self):
         self.update_enemies()
         self.update_projectiles()
+        self.update_mines()
 
     def update_enemies(self):
         # Update and draw/destroy enemies
@@ -107,6 +113,26 @@ class Game:
             else:
                 # Draw the projectile
                 projectile.draw(self.screen)
+
+    def update_mines(self):
+        for mine in self.mines[:]:
+            mine.update()
+            mine.draw(self.screen)
+            if mine.exploded:
+                for enemy in self.enemies[:]:
+                    if math.hypot(enemy.rect.centerx - mine.rect.centerx, enemy.rect.centery - mine.rect.centery) < 50:
+                        try:
+                            # Remove enemy if it is within the blast radius
+                            self.enemies.remove(enemy)
+                        except ValueError:  # If enemy is already removed, ignore
+                            pass
+                        self.score += 1
+                if math.hypot(self.player.centerx - mine.rect.centerx, self.player.centery - mine.rect.centery) < 50:
+                    self.__init__(self.screen)
+                try:
+                    self.mines.remove(mine)
+                except ValueError:
+                    pass
 
     def draw_player(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
