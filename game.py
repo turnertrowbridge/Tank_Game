@@ -1,6 +1,7 @@
 import pygame
 from enemy import Enemy
 from player import Player
+import random
 
 
 class Game:
@@ -54,6 +55,10 @@ class Game:
         # Display lives and game over if player has no lives
         self.update_lives()
 
+        # Randomly spawn enemies at a 10% chance each frame
+        if random.randint(0, 100) < 10:
+            self.spawn_enemy()
+
         # Update the display
         pygame.display.flip()
 
@@ -88,6 +93,29 @@ class Game:
                 self.game_over_time = (
                     pygame.time.get_ticks() - self.start_time) // 1000
                 self.game_state = "game_over"
+
+    def spawn_enemy(self):
+        # Randomly choose a side of the screen to spawn the enemy from
+        side = random.choice(['top', 'bottom', 'left', 'right'])
+        offscreen_offset = 200
+
+        # Generate a random position and velocity for the enemy
+        if side == 'top':
+            x = random.randint(0, self.screen.get_width())
+            y = -1 * offscreen_offset
+        elif side == 'bottom':
+            x = random.randint(0, self.screen.get_width())
+            y = self.screen.get_height() + offscreen_offset
+        elif side == 'left':
+            x = -1 * offscreen_offset
+            y = random.randint(0, self.screen.get_height())
+        elif side == 'right':
+            x = self.screen.get_width() + offscreen_offset
+            y = random.randint(0, self.screen.get_height())
+
+        # Create a new enemy and add it to the list of enemies
+        enemy = Enemy(x, y)
+        self.enemies.append(enemy)
 
     def show_game_over_screen(self):
         game_over_surf = pygame.Surface((580, 480))
@@ -145,7 +173,8 @@ class Game:
         background_y = center_y - background_surf.get_height() // 2
         self.screen.blit(background_surf, (background_x, background_y))
 
-        play_again_button = pygame.Rect(background_x + play_again_x, background_y + play_again_y, play_again_surf.get_width(), play_again_surf.get_height())
+        play_again_button = pygame.Rect(background_x + play_again_x, background_y +
+                                        play_again_y, play_again_surf.get_width(), play_again_surf.get_height())
 
         pygame.display.flip()
 
@@ -159,4 +188,5 @@ class Game:
                     mouse_pos = pygame.mouse.get_pos()
                     if play_again_button.collidepoint(mouse_pos):
                         waiting = False
-                        self.__init__(self.screen)  # Temporarily reset the game solution
+                        # Temporarily reset the game solution
+                        self.__init__(self.screen)
