@@ -42,7 +42,7 @@ class Player:
                                     self.model.centery - math.sin(math.radians(angle)) * (self.model_aim.width // 2), angle, (0, 0, 255), self.projectile_speed)
             self.projectiles.append(projectile)
 
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and len(self.mines) < 3:
+        if ((event.type == pygame.MOUSEBUTTONDOWN and event.button == 3) or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE)) and len(self.mines) < 3:
             self.mines.append(
                 Mine(self.model.centerx, self.model.centery))
 
